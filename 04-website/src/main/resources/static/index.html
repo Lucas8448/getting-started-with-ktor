@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Task Manager Web Application</title>
+</head>
+<body>
+    <h1>Task Manager Web Application</h1>
+    
+    <p><a href="/tasks">View all the tasks</a></p>
+
+    <h3>Find Tasks by Priority</h3>
+    <form action="/tasks/byPriority" method="get">
+        <label for="priority">Priority:</label>
+        <select name="priority" id="priority">
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+            <option value="Vital">Vital</option>
+        </select>
+        <button type="submit">Search</button>
+    </form>
+
+    <h3>Find Task by Name</h3>
+    <form action="/tasks/byName" method="get">
+        <label for="name">Task Name:</label>
+        <input type="text" id="name" name="name" required>
+        <button type="submit">Search</button>
+    </form>
+
+    <h3>Add New Task</h3>
+    <form action="/tasks" method="post">
+        <label for="newName">Name:</label>
+        <input type="text" id="newName" name="name" required><br><br>
+        
+        <label for="description">Description:</label>
+        <input type="text" id="description" name="description" required><br><br>
+        
+        <label for="newPriority">Priority:</label>
+        <select name="priority" id="newPriority">
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+            <option value="Vital">Vital</option>
+        </select><br><br>
+        
+        <button type="submit">Add Task</button>
+    </form>
+</body>
+</html>
