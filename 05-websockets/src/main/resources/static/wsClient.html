@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Task Broadcast Client</title>
+    <style>
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        margin-top: 20px;
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background-color: #f2f2f2;
+      }
+      .container {
+        display: flex;
+        gap: 20px;
+      }
+      .form-section {
+        flex: 1;
+      }
+      .list-section {
+        flex: 2;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Task Broadcast Client</h1>
+
+    <div class="container">
+      <div class="form-section">
+        <h3>Add New Task</h3>
+        <form id="newTaskForm">
+          <label for="name">Name:</label><br />
+          <input type="text" id="name" name="name" required /><br /><br />
+
+          <label for="description">Description:</label><br />
+          <input
+            type="text"
+            id="description"
+            name="description"
+            required
+          /><br /><br />
+
+          <label for="priority">Priority:</label><br />
+          <select name="priority" id="priority">
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+            <option value="Vital">Vital</option></select
+          ><br /><br />
+
+          <button type="submit">Add Task</button>
+        </form>
+      </div>
+
+      <div class="list-section">
+        <h3>Live Tasks</h3>
+        <table id="tasksTable">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Priority</th>
+            </tr>
+          </thead>
+          <tbody id="tasksTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <script>
+      const socket = new WebSocket("ws://localhost:8080/tasks2");
+
+      socket.onopen = () => {
+        console.log("Connected to broadcast server");
+      };
+
+      socket.onmessage = (event) => {
+        const task = JSON.parse(event.data);
+        console.log("Received task:", task);
+
+        const tbody = document.getElementById("tasksTableBody");
+        const row = document.createElement("tr");
+
+        const nameCell = document.createElement("td");
+        nameCell.textContent = task.name;
+        row.appendChild(nameCell);
+
+        const descCell = document.createElement("td");
+        descCell.textContent = task.description;
+        row.appendChild(descCell);
+
+        const priorityCell = document.createElement("td");
+        priorityCell.textContent = task.priority;
+        row.appendChild(priorityCell);
+
+        tbody.appendChild(row);
+      };
+
+      document.getElementById("newTaskForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const name = document.getElementById("name").value;
+        const description = document.getElementById("description").value;
+        const priority = document.getElementById("priority").value;
+
+        const task = {
+          name: name,
+          description: description,
+          priority: priority,
+        };
+
+        socket.send(JSON.stringify(task));
+
+        document.getElementById("name").value = "";
+        document.getElementById("description").value = "";
+      });
+    </script>
+  </body>
+</html>

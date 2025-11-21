@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Task Stream</title>
+    <style>
+        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Task Stream (One-way)</h1>
+    <button id="viewTasks">View The Tasks</button>
+    <table id="tasksTable">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Priority</th>
+            </tr>
+        </thead>
+        <tbody id="tasksTableBody">
+        </tbody>
+    </table>
+
+    <script>
+        document.getElementById('viewTasks').addEventListener('click', () => {
+            const socket = new WebSocket("ws://localhost:8080/tasks");
+            
+            socket.onmessage = (event) => {
+                const task = JSON.parse(event.data);
+                console.log("Received task:", task);
+                
+                const tbody = document.getElementById('tasksTableBody');
+                const row = document.createElement('tr');
+                
+                const nameCell = document.createElement('td');
+                nameCell.textContent = task.name;
+                row.appendChild(nameCell);
+                
+                const descCell = document.createElement('td');
+                descCell.textContent = task.description;
+                row.appendChild(descCell);
+                
+                const priorityCell = document.createElement('td');
+                priorityCell.textContent = task.priority;
+                row.appendChild(priorityCell);
+                
+                tbody.appendChild(row);
+            };
+            
+            socket.onclose = (event) => {
+                console.log("Connection closed", event);
+            };
+        });
+    </script>
+</body>
+</html>
